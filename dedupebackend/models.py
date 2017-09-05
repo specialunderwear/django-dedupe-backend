@@ -1,11 +1,11 @@
 from os.path import join
 from django.db import models
-
+from dedupebackend import settings
 
 class UniqueFile(models.Model):
     id = models.CharField(max_length=40, primary_key=True)
-    filename = models.CharField(max_length=512, unique=True)
-    original_filename = models.CharField(max_length=512, blank=True, null=True)
+    filename = models.CharField(max_length=50, unique=True)
+    original_filename = models.CharField(max_length=settings.MAX_FILENAME_LENGTH, blank=True, null=True)
 
     @property
     def directory(self):
