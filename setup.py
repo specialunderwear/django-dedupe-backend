@@ -12,7 +12,7 @@ __version__ = "0.0.1"
 
 setup(
     # package name in pypi
-    name='django-git-backend',
+    name='django-dedupe-backend',
     # extract version from module.
     version=__version__,
     description="The super storage backend",
