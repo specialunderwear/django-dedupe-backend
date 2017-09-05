@@ -1,9 +1,20 @@
+from os.path import join
 from django.db import models
 
-from gitbackend.fields import OidField
 
+class UniqueFile(models.Model):
+    id = models.CharField(max_length=40, primary_key=True)
+    filename = models.CharField(max_length=512, unique=True)
+    original_filename = models.CharField(max_length=512, blank=True, null=True)
 
-class GitStorageFile(models.Model):
-    oid = OidField(primary_key=True)
-    filename = models.CharField(max_length=512)
+    @property
+    def directory(self):
+        return self.id[:2]
 
+    @property
+    def relative_path(self):
+        return join(self.directory, self.filename)
+
+    class Meta:
+        verbose_name = 'Unique, deduplicated file'
+        verbose_name_plural = 'Unique files'
