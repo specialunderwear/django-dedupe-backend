@@ -14,5 +14,5 @@ def file_hash(content):
     return hasher.hexdigest()
 
 def file_name(id, name):
-    _, ext = splitext(name):
-    return "%s%s" % id, ext
+    _, ext = splitext(name)
+    return "%s%s" % (id, ext)

@@ -1,4 +1,4 @@
-from os.path import join
+from os.path import join, basename
 from django.db import models
 from dedupebackend import settings
 
@@ -6,6 +6,23 @@ class UniqueFile(models.Model):
     id = models.CharField(max_length=40, primary_key=True)
     filename = models.CharField(max_length=50, unique=True)
     original_filename = models.CharField(max_length=settings.MAX_FILENAME_LENGTH, blank=True, null=True)
+
+    def __unicode__(self):
+        return "%s" % self.original_filename
+
+    def __nonzero__(self):
+        print 'ksjfhkjshfkjhfsdkjhkjhkjh henk', bool(self.pk)
+        return bool(self.pk)
+
+    def get_absolute_url(self):
+        return join(settings.STORAGE_URL, self.relative_path)
+
+    @property
+    def url(self):
+        if self.pk is not None:
+            return self.get_absolute_url()
+
+        return None
 
     @property
     def directory(self):
