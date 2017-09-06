@@ -1,11 +1,11 @@
 {% load i18n %}
 <div class="related-widget-wrapper">
-    {% if is_initial %}
-    {% trans 'Currently' %}: <a href="{{ value.url }}">{{ value.original_filename }}</a>
+{% if is_initial %}
+    <b>{% trans 'Currently' %}:</b> <a href="{{ value.url }}">{{ value.original_filename }}</a><br/>
+    <b>{% trans 'Change' %}:</b><br/>
     <div>
-    {% trans 'Change' %}:<br/>
-    <input class="vTextField" size="40" max_length="40" id="{{ id }}_id" name="{{ name }}_id" type="text" value="{{ value.id }}">
-    <a href="{% url 'admin:dedupebackend_uniquefile_changelist' %}?_to_field=id" class="related-lookup" id="lookup_{{ id }}_id" title="Opzoeken"></a>
+    <input class="vTextField" size="40" max_length="40" id="{{ id }}-id" name="{{ name }}-id" type="text" value="{{ value.id }}">
+    <a href="{% url 'admin:dedupebackend_uniquefile_changelist' %}?_to_field=id" class="related-lookup" id="lookup_{{ id }}-id" title="{% trans 'Lookup' %}">&nbsp;</a>
     <br/>
     <input id="id_file" name="file" type="file"><br/>
     </div>
@@ -13,33 +13,10 @@
     <label for="{{ name }}-clear_id">{% trans 'Clear' %}</label>
     &nbsp;<input id="{{ name }}-clear_id" name="{{ name }}-clear" type="checkbox">
     {% endif %}
-    
-    {% else %}
+
+{% else %}
     <input id="id_file" name="file" type="file"><br/>
-    <input class="vTextField" id="{{ id }}_id" name="{{ name }}_id" type="text" value=""><a href="{% url 'admin:dedupebackend_uniquefile_changelist' %}?_to_field=id" class="related-lookup" id="lookup_{{ id }}_id" title="Opzoeken"></a>    
-    {% endif %}
-
-    {% comment %}
-    <h1>{{ name }}</h1>
-    {{ initial_text }}: <a href="{{value.url}}">{{ value }}</a>
-    {{ clear_template|safe }}
-    <br />{{ input_text }}: {{ input|safe }}
-
-    template_with_clear = '%(clear)s <label for="%(clear_checkbox_id)s">%(clear_checkbox_label)s</label>'
-    
-    Huidige: <a href="/media/gitbackend/f9/f9b0d43661e44a4da93abae283482eacb5d884a5.jpg">ActiOn_20.jpg</a>
-    <input id="file-clear_id" name="file-clear" type="checkbox">
-    <br>Wijzigen: <input id="id_file" name="file" type="file">
-    <a class="related-widget-wrapper-link change-related" id="change_id_file" data-href-template="/admin/dedupebackend/uniquefile/__fk__/change/?_to_field=id&amp;_popup=1" title="Wijzig geselecteerde Unique, deduplicated file">
-        <img src="/static/admin/img/icon-changelink.svg" alt="Wijzigen">
-    </a>
-        
-        
-    <a class="related-widget-wrapper-link add-related" id="add_{{ id }}" href="{% url 'admin:dedupebackend_uniquefile_add' %}?_to_field=id&amp;_popup=1" title="{% trans 'Voeg nog een Unique, deduplicated file toe' %}">
-        <img src="/static/admin/img/icon-addlink.svg" alt="Toevoegen">
-    </a>
-    <hr/>
-    <label for="id_file">File:</label>
-    <input admin_site="admin" class="vForeignKeyRawIdAdminField" id="id_file" limit_choices_to="{}" name="file" type="text" value="ActiOn_20.jpg"><a href="/admin/dedupebackend/uniquefile/?_to_field=id" class="related-lookup" id="lookup_id_file" title="Opzoeken"></a>
-    {% endcomment %}
+    <input class="vTextField" id="{{ id }}-id" name="{{ name }}-id" type="text" value="">
+    <a href="{% url 'admin:dedupebackend_uniquefile_changelist' %}?_to_field=id" class="related-lookup" id="lookup_{{ id }}-id" title="{% trans 'Lookup' %}">&nbsp;</a>
+{% endif %}
 </div>
