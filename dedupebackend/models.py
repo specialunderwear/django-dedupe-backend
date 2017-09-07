@@ -1,6 +1,10 @@
 from os.path import join, basename
+
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
+
 from dedupebackend import settings
+
 
 class UniqueFile(models.Model):
     id = models.CharField(max_length=40, primary_key=True)
@@ -34,5 +38,5 @@ class UniqueFile(models.Model):
         return join(self.directory, self.filename)
 
     class Meta:
-        verbose_name = 'Unique, deduplicated file'
-        verbose_name_plural = 'Unique files'
+        verbose_name = _('Unique, deduplicated file')
+        verbose_name_plural = _('Unique files')
