@@ -1,5 +1,5 @@
-Deduplicate you uploaded file
------------------------------
+Deduplicate your uploaded file
+------------------------------
 
 If making sure your file uploads are never duplicated is more important than
 organising your files into neat folders, you might want to try this package.
@@ -64,3 +64,17 @@ Use something like this::
         name = models.TextField()
         file = UniqueFileField("A normal file, nothing special")
         image = UniqueImageField("an image")
+
+How does it work?
+=================
+
+Well, for each uploaded file, dedupebackend creates a file on disk named after
+the hash of the file. Mostly the same as git does (I actually tried to use
+libgit2 for this, but git is bad with deletions). Next to that file, a table
+holds a record with some information about the file. The primary key of this
+table is the hash value of the file. So it is really impossible to add
+duplicates (but but, hash collisions).
+
+The fields actually render a file form field on a foreign key model field.
+The storage backend returns the hash value as the file name. And it can return
+file objects when given such a hash value.
