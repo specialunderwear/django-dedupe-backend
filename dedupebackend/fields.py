@@ -8,6 +8,8 @@ from django.utils.safestring import mark_safe
 from dedupebackend.storage import DedupedStorage
 from dedupebackend.models import UniqueFile
 
+__all__ = ('UniqueFileField', 'UniqueImageField')
+
 
 class UniqueFileAdminWidget(forms.ClearableFileInput):
     template_name = 'dedupebackend/uniquefield.html'
