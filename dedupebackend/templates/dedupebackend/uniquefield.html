@@ -1,0 +1,32 @@
+{% load i18n %}
+
+<div class="related-widget-wrapper uniquefield">
+
+{% if is_initial %}
+    {% block uniquefield_is_initial %}
+
+        {% block uniquefield_display %}
+            <b>{% trans 'Currently' %}:</b> <a href="{{ value.url }}">{{ value.original_filename }}</a><br/>
+        {% endblock %}
+
+        <b>{% trans 'Change' %}:</b><br/>
+        <div>
+        <input class="vTextField" size="40" max_length="40" id="{{ id }}-id" name="{{ name }}-id" type="text" value="{{ value.id }}">
+        <a href="{% url 'admin:dedupebackend_uniquefile_changelist' %}?_to_field=id" class="related-lookup" id="lookup_{{ id }}-id" title="{% trans 'Lookup' %}">&nbsp;</a>
+        <br/>
+        <input id="id_file" name="file" type="file"><br/>
+        </div>
+        {% if not is_required %}
+        <label for="{{ name }}-clear_id">{% trans 'Clear' %}</label>
+        &nbsp;<input id="{{ name }}-clear_id" name="{{ name }}-clear" type="checkbox">
+        {% endif %}
+    {% endblock %}
+{% else %}
+    {% block uniquefield_is_bound %}
+    <input id="id_file" name="file" type="file"><br/>
+    <input class="vTextField" id="{{ id }}-id" name="{{ name }}-id" type="text" value="">
+    <a href="{% url 'admin:dedupebackend_uniquefile_changelist' %}?_to_field=id" class="related-lookup" id="lookup_{{ id }}-id" title="{% trans 'Lookup' %}">&nbsp;</a>
+    {% endblock %}
+{% endif %}
+
+</div>

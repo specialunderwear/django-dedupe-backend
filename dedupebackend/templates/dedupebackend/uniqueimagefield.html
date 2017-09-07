@@ -1,0 +1,4 @@
+{% extends 'dedupebackend/uniquefield.html' %}
+{% block uniquefield_display %}
+    <img src="{{ value.url }}" alt="{{ value.original_filename }}"/><br/>
+{% endblock %}
