@@ -16,7 +16,7 @@ def file_hash(content):
 
 def file_name(id, name):
     _, ext = splitext(name)
-    return "%s%s" % (id, ext)
+    return "%s%s" % (id, ext.lower())
 
 
 def sizeof_fmt(num, suffix='B'):

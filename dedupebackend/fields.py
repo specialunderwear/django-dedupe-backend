@@ -75,9 +75,10 @@ class UniqueFileAdminField(forms.FileField):
 class UniqueFileField(ForeignKey):
     form_class = UniqueFileAdminField
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, verbose_name=None, *args, **kwargs):
         self.storage =  DedupedStorage()
         kwargs['to'] = 'dedupebackend.UniqueFile'
+        kwargs['verbose_name'] = verbose_name
         super(UniqueFileField, self).__init__(*args, **kwargs)
 
     def formfield(self, **kwargs):
