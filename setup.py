@@ -33,7 +33,6 @@ setup(
     # specify dependencies
     install_requires=[
         'setuptools',
-        'pygit2==0.24.2',
     ],
     # mark test target to require extras.
     extras_require = {
