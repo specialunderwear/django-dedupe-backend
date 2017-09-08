@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.admin.widgets import ForeignKeyRawIdWidget
+from django.contrib.admin.widgets import ForeignKeyRawIdWidget, RelatedFieldWidgetWrapper
 from django.core.files.base import File
 from django.db.models import ForeignKey
 from django.template.loader import render_to_string
@@ -14,10 +14,15 @@ __all__ = ('UniqueFileField', 'UniqueImageField')
 class UniqueFileAdminWidget(forms.ClearableFileInput):
     template_name = 'dedupebackend/uniquefield.html'
 
-    def __init__(self, *args, **kwargs):
-        super(UniqueFileAdminWidget, self).__init__(*args, **kwargs)
+    @property
+    def choices(self):
+        return self.attrs['limit_choices_to']
 
-    def render(self, name, value, attrs=None):
+    @choices.setter
+    def choices(self, value):
+        self.attrs['limit_choices_to'] = value
+
+    def render(self, name, value, attrs={}):
         context = {
             'name': name,
             'is_initial': False,
@@ -25,8 +30,12 @@ class UniqueFileAdminWidget(forms.ClearableFileInput):
             'input_text': self.input_text,
             'clear_checkbox_label': self.clear_checkbox_label,
             'value': value,
-            'is_required': self.is_required
+            'is_required': self.is_required,
         }
+        context.update(self.attrs)
+        context.update(attrs)
+        context['lookup_url'] = "%(admin_site)s:dedupebackend_uniquefile_changelist" % context
+
         if self.is_initial(value):
             context['is_initial'] = True
 
@@ -47,6 +56,7 @@ class UniqueFileAdminWidget(forms.ClearableFileInput):
             'all': ('dedupebackend/uniquefield.css',)
         }
 
+
 class UniqueFileAdminField(forms.FileField):
     widget = UniqueFileAdminWidget
 
@@ -56,14 +66,13 @@ class UniqueFileAdminField(forms.FileField):
         
         super(UniqueFileAdminField, self).__init__(*args, **kwargs)
 
-    def bound_data(self, data, initial):
-        return super(UniqueFileAdminField, self).bound_data(data, initial)
-
     def widget_attrs(self, widget):
-        return {
+        base = super(UniqueFileAdminField, self).widget_attrs(widget)
+        base.update({
             'limit_choices_to': self.limit_choices_to,
             'admin_site': self.admin_site
-        }
+        })
+        return base
 
     def to_python(self, data):
         if isinstance(data, basestring) and len(data) == 40:
@@ -77,20 +86,24 @@ class UniqueFileField(ForeignKey):
 
     def __init__(self, verbose_name=None, *args, **kwargs):
         self.storage =  DedupedStorage()
+        if 'related_name' not in kwargs:  # do not create backwards accessor by default
+            kwargs['related_name'] = '+'
+
         kwargs['to'] = 'dedupebackend.UniqueFile'
         kwargs['verbose_name'] = verbose_name
         super(UniqueFileField, self).__init__(*args, **kwargs)
 
     def formfield(self, **kwargs):
-        raw_id_widget = kwargs.pop('widget', None)
-        if not isinstance(raw_id_widget, ForeignKeyRawIdWidget):
-            raise Exception('Please add the UniqueFileField to raw_id_fields')
-
         defaults = {
             'form_class': self.form_class,
             'max_length': self.max_length,
-            'admin_site': raw_id_widget.admin_site
         }
+        
+        widget = kwargs.pop('widget', None)
+        if isinstance(widget, ForeignKeyRawIdWidget) or isinstance(widget, RelatedFieldWidgetWrapper):
+            defaults['admin_site'] = widget.admin_site.name
+        else:
+            defaults['widget'] = widget
 
         # If a file has been provided previously, then the form doesn't require
         # that a new file is provided this time.

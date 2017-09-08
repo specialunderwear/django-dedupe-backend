@@ -12,7 +12,9 @@
         <b>{% trans 'Change' %}:</b><br/>
         <div>
         <input class="vTextField" size="40" max_length="40" id="{{ id }}-id" name="{{ name }}-id" type="text" value="{{ value.id }}">
-        <a href="{% url 'admin:dedupebackend_uniquefile_changelist' %}?_to_field=id" class="related-lookup" id="lookup_{{ id }}-id" title="{% trans 'Lookup' %}">&nbsp;</a>
+        {% if admin_site %}
+        <a href="{% url lookup_url %}?_to_field=id" class="related-lookup" id="lookup_{{ id }}-id" title="{% trans 'Lookup' %}">&nbsp;</a>
+        {% endif %}
         <br/>
         <input id="id_file" name="file" type="file"><br/>
         </div>
@@ -25,7 +27,9 @@
     {% block uniquefield_is_bound %}
     <input id="id_file" name="file" type="file"><br/>
     <input class="vTextField" id="{{ id }}-id" name="{{ name }}-id" type="text" value="">
-    <a href="{% url 'admin:dedupebackend_uniquefile_changelist' %}?_to_field=id" class="related-lookup" id="lookup_{{ id }}-id" title="{% trans 'Lookup' %}">&nbsp;</a>
+    {% if admin_site %}
+    <a href="{% url lookup_url %}?_to_field=id" class="related-lookup" id="lookup_{{ id }}-id" title="{% trans 'Lookup' %}">&nbsp;</a>
+    {% endif %}
     {% endblock %}
 {% endif %}
 

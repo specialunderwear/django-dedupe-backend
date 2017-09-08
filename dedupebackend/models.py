@@ -1,12 +1,27 @@
-from os.path import join, basename
+from os.path import join
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from dedupebackend.utils import (
+    get_or_create_from_file,
+    get_directory_from_file_id,
+    SpecificNameStorage
+)
 from dedupebackend import settings
 
 
+class UniqueFileManager(models.Manager):
+    use_in_migrations = True
+
+    def get_or_create_from_file(self, name, content):
+        storage = SpecificNameStorage()
+        return get_or_create_from_file(name, content, storage, self.model, self)
+
+
 class UniqueFile(models.Model):
+    objects = UniqueFileManager()
+
     id = models.CharField(max_length=40, primary_key=True)
     filename = models.CharField(max_length=50, unique=True)
     original_filename = models.CharField(max_length=settings.MAX_FILENAME_LENGTH, blank=True, null=True)
@@ -31,7 +46,7 @@ class UniqueFile(models.Model):
 
     @property
     def directory(self):
-        return self.id[:2]
+        return get_directory_from_file_id(self.id)
 
     @property
     def relative_path(self):

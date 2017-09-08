@@ -1,19 +1,13 @@
-import mimetypes
-import os
-
-from os.path import basename
-from django.core.files.storage import FileSystemStorage
 from django.core.files import File
-from django.core.urlresolvers import reverse
 
-from dedupebackend import settings
 from dedupebackend.models import UniqueFile
-from dedupebackend.utils import file_hash, file_name
+from dedupebackend.utils import (
+    SpecificNameStorage,
+    get_or_create_from_file
+)
 
-class DedupedStorage(FileSystemStorage):
 
-    def __init__(self):
-        super(DedupedStorage, self).__init__(location=settings.STORAGE_PATH)
+class DedupedStorage(SpecificNameStorage):
 
     def _open(self, id, mode='rb'):
         try:
@@ -27,28 +21,8 @@ class DedupedStorage(FileSystemStorage):
         if name is None:
             name = content.name
 
-        id = file_hash(content)
-
-        if not UniqueFile.objects.filter(pk=id).exists():
-            unique_name = file_name(id, name)
-            mimetype, _ = mimetypes.guess_type(name)
-            size = os.fstat(content.fileno()).st_size
-            uf = UniqueFile.objects.create(
-                id=id,
-                filename=unique_name,
-                original_filename=basename(name)[:settings.MAX_FILENAME_LENGTH],
-                mime_type=mimetype,
-                size=size
-            )
-            try:
-                self._save(uf.relative_path, content)
-            except IOError:
-                pass
-        
-        return id
-
-    def get_available_name(self, name, max_length=None):
-        return name
+        uf, _ = get_or_create_from_file(name, content, self, UniqueFile, UniqueFile.objects)
+        return uf.id
 
     def url(self, name):
         uf = UniqueFile.objects.get(id=name)
