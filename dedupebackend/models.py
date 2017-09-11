@@ -34,8 +34,16 @@ class UniqueFile(models.Model):
     def __nonzero__(self):
         return bool(self.pk)
 
+    @property
+    def path(self):
+        return join(self.directory, self.filename)
+
+    @property
+    def path_full(self):
+        return join(settings.STORAGE_PATH, self.path)
+
     def get_absolute_url(self):
-        return join(settings.STORAGE_URL, self.relative_path)
+        return join(settings.STORAGE_URL, self.path)
 
     @property
     def url(self):
@@ -47,10 +55,6 @@ class UniqueFile(models.Model):
     @property
     def directory(self):
         return get_directory_from_file_id(self.id)
-
-    @property
-    def relative_path(self):
-        return join(self.directory, self.filename)
 
     class Meta:
         verbose_name = _('Unique, deduplicated file')

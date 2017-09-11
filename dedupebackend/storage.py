@@ -1,3 +1,4 @@
+import logging
 from django.core.files import File
 
 from dedupebackend.models import UniqueFile
@@ -6,22 +7,29 @@ from dedupebackend.utils import (
     get_or_create_from_file
 )
 
+logger = logging.getLogger(__name__)
+
 
 class DedupedStorage(SpecificNameStorage):
 
     def _open(self, id, mode='rb'):
         try:
             file_obj = UniqueFile.objects.get(pk=id)
-            file_handle = open(self.path(file_obj.relative_path), mode)
+            file_handle = open(self.path(file_obj.path), mode)
             return File(file_handle, file_obj.filename)
         except UniqueFile.DoesNotExist:
             return None
 
-    def save(self, name, content, max_length=None):
+    def create_or_load(self, name, content, max_length=None):
         if name is None:
             name = content.name
 
-        uf, _ = get_or_create_from_file(name, content, self, UniqueFile, UniqueFile.objects)
+        uf, created = get_or_create_from_file(name, content, self, UniqueFile, UniqueFile.objects)
+        logger.debug("%s was created? %s" % (name, created))
+        return uf, created
+
+    def save(self, name, content, max_length=None):
+        uf, _ = self.create_or_load(name, content, max_length)
         return uf.id
 
     def url(self, name):
