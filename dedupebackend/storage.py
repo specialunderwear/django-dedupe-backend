@@ -10,13 +10,22 @@ from dedupebackend.utils import (
 logger = logging.getLogger(__name__)
 
 
+class DedupedStorageFile(File):
+    """
+    A file plus some data.
+    """
+    def __init__(self, file, data, name=None):
+        self.data = data
+        super(DedupedStorageFile, self).__init__(file, name)
+
+
 class DedupedStorage(SpecificNameStorage):
 
     def _open(self, id, mode='rb'):
         try:
             file_obj = UniqueFile.objects.get(pk=id)
             file_handle = open(self.path(file_obj.path), mode)
-            return File(file_handle, file_obj.filename)
+            return DedupedStorageFile(file_handle, file_obj, file_obj.filename)
         except UniqueFile.DoesNotExist:
             return None
 
