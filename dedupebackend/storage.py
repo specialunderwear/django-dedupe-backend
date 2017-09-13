@@ -18,6 +18,9 @@ class DedupedStorageFile(File):
         self.data = data
         super(DedupedStorageFile, self).__init__(file, name)
 
+    @property
+    def url(self):
+        return self.data.url
 
 class DedupedStorage(SpecificNameStorage):
 

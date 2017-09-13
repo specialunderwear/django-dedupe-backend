@@ -85,13 +85,20 @@ class UniqueFileField(ForeignKey):
     form_class = UniqueFileAdminField
 
     def __init__(self, verbose_name=None, *args, **kwargs):
-        self.storage =  DedupedStorage()
+        self.storage =  kwargs.pop('storage', DedupedStorage())
         if 'related_name' not in kwargs:  # do not create backwards accessor by default
             kwargs['related_name'] = '+'
 
         kwargs['to'] = 'dedupebackend.UniqueFile'
         kwargs['verbose_name'] = verbose_name
         super(UniqueFileField, self).__init__(*args, **kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super(UniqueFileField, self).deconstruct()
+        if not self.storage.__class__ is DedupedStorage:
+            kwargs['storage'] = self.storage
+
+        return name, path, args, kwargs
 
     def formfield(self, **kwargs):
         defaults = {
