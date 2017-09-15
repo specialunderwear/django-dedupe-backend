@@ -16,7 +16,7 @@
         <a href="{% url lookup_url %}?_to_field=id" class="related-lookup" id="lookup_{{ id }}-id" title="{% trans 'Lookup' %}">&nbsp;</a>
         {% endif %}
         <br/>
-        <input id="id_file" name="file" type="file"><br/>
+        <input id="{{ id }}" name="{{ name }}" type="file"><br/>
         </div>
         {% if not is_required %}
         <label for="{{ name }}-clear_id">{% trans 'Clear' %}</label>
@@ -25,7 +25,7 @@
     {% endblock %}
 {% else %}
     {% block uniquefield_is_bound %}
-    <input id="id_file" name="file" type="file"><br/>
+    <input id="{{ id }}" name="{{ name }}" type="file"><br/>
     <input class="vTextField" id="{{ id }}-id" name="{{ name }}-id" type="text" value="">
     {% if admin_site %}
     <a href="{% url lookup_url %}?_to_field=id" class="related-lookup" id="lookup_{{ id }}-id" title="{% trans 'Lookup' %}">&nbsp;</a>
