@@ -80,6 +80,9 @@ class UniqueFileAdminField(forms.FileField):
 
         return super(UniqueFileAdminField, self).to_python(data)
 
+    def has_changed(self, initial, data):
+        return getattr(initial, 'id', None) != self.to_python(data)
+
 
 class UniqueFileField(ForeignKey):
     form_class = UniqueFileAdminField
@@ -136,7 +139,6 @@ class UniqueFileField(ForeignKey):
 
     def value_from_object(self, instance):
         return getattr(instance, self.name)
-
 
 class UniqueImageAdminWidget(UniqueFileAdminWidget):
     template_name = 'dedupebackend/uniqueimagefield.html'
