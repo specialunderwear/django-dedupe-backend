@@ -74,6 +74,12 @@ class UniqueFileAdminField(forms.FileField):
         })
         return base
 
+    def prepare_value(self, value):
+        if isinstance(value, basestring) and len(value) == 40:
+            return UniqueFile.objects.get(pk=value)
+
+        return super(UniqueFileAdminField, self).prepare_value(value)
+
     def to_python(self, data):
         if isinstance(data, basestring) and len(data) == 40:
             return data
