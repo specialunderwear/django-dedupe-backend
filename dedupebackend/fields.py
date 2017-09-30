@@ -87,6 +87,8 @@ class UniqueFileAdminField(forms.FileField):
         return super(UniqueFileAdminField, self).to_python(data)
 
     def has_changed(self, initial, data):
+        if data is False:  # file is being cleared.
+            return True
         return getattr(initial, 'id', None) != self.to_python(data)
 
 
@@ -134,7 +136,7 @@ class UniqueFileField(ForeignKey):
         return super(UniqueFileField, self).formfield(**defaults)
 
     def save_form_data(self, instance, data):
-        if data is False:
+        if data is False:  # file is being cleared.
             data = None
         if isinstance(data, File):
             data = self.storage.save(None, data)
