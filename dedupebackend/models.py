@@ -26,7 +26,7 @@ class UniqueFile(models.Model):
     filename = models.CharField(max_length=50, unique=True)
     original_filename = models.CharField(max_length=settings.MAX_FILENAME_LENGTH, blank=True, null=True)
     size = models.IntegerField(null=True)
-    mime_type = models.CharField(max_length=64, null=True)
+    mime_type = models.CharField(max_length=128, null=True)
 
     def __unicode__(self):
         return "%s" % self.original_filename

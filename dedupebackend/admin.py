@@ -5,6 +5,7 @@ from dedupebackend.utils import sizeof_fmt
 from dedupebackend.filters import FileSizeFilter
 from django.utils.safestring import mark_safe
 
+
 class UniqueFileAdmin(admin.ModelAdmin):
     search_fields = ('original_filename', 'filename')
     list_display = ('original_filename', 'mime_type', 'filesize', 'id', 'tiny_thumb')

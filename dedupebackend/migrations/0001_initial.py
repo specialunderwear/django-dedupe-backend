@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('id', models.CharField(max_length=40, primary_key=True, serialize=False)),
                 ('filename', models.CharField(max_length=50, unique=True)),
                 ('original_filename', models.CharField(blank=True, max_length=512, null=True)),
-                ('mime_type', models.CharField(max_length=64, null=True)),
+                ('mime_type', models.CharField(max_length=128, null=True)),
                 ('size', models.IntegerField(null=True)),
             ],
             options={
