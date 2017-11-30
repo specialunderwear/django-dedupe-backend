@@ -1,0 +1,3 @@
+include LICENSE
+recursive-include dedupebackend *.css
+recursive-include dedupebackend *.html
